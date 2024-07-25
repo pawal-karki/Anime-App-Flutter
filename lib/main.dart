@@ -92,6 +92,18 @@ class _HomePageState extends State<HomePage> {
       return animeList;
     });
   }
+  Future<void> _searchAnime(String query) async {
+    var results = await AnimeService.searchAnime(query);
+    List<AnimeModel> animeResultList = [];
+    for (var json in results){
+      animeResultList.add(AnimeModel.fromJson(json));
+    }
+    setState(() {
+      results = Future.value(animeResultList);
+      _searchResults = results;
+      _isSearching = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +114,11 @@ class _HomePageState extends State<HomePage> {
             Container(
                 width: 250,
                 child: TextField(
+                  controller: _searchController,
+                  onSubmitted: (query) {
+                    _searchAnime(query);
+                    _searchController.clear();
+                  },
                   decoration: InputDecoration(
                       hintText: 'Search Anime', prefixIcon: Icon(Icons.search)),
                 ))
@@ -180,4 +197,5 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+  
 }
